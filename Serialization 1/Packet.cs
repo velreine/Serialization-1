@@ -1,14 +1,37 @@
 ﻿using System;
+using System.IO;
 using System.Runtime.Serialization;
 
 namespace Serialization_1
 {
+
+    public enum PacketType
+    {
+        CLIENT_AUTH_LOGIN_BEGIN,
+        SERVER_AUTH_LOGIN_RESPONSE,
+        FIELD_03,
+        FIELD_04,
+        FIELD_05,
+        FIELD_06,
+        FIELD_07,
+        FIELD_08,
+        FIELD_09,
+        FIELD_10
+
+    };
+
+
+
+
+
     [Serializable()]
-    public class Packet : ISerializable
+    public class Packet : MemoryStream , ISerializable
     {
 
-        public string Name;
+        public string Sender;
         public int Age;
+        public int TypeID;
+        public PacketType Type { get { return (PacketType)TypeID; } }
         public int Length { get { return this.Payload.Length; } }
         public byte[] Payload;
 
@@ -16,9 +39,10 @@ namespace Serialization_1
 
         public void GetObjectData(SerializationInfo info, StreamingContext context)
         {
-            info.AddValue("Name", Name, typeof(string));
+            info.AddValue("Sender", Sender, typeof(string));
             info.AddValue("Age", Age, typeof(int));
             info.AddValue("Length", Length, typeof(int));
+            info.AddValue("TypeID", TypeID, typeof(int));
 
             int num = 0;
             foreach (byte b in Payload)
@@ -34,9 +58,9 @@ namespace Serialization_1
 
         public Packet(SerializationInfo info, StreamingContext context)
         {
-            this.Name = (string)info.GetValue("Name", typeof(string));
+            this.Sender = (string)info.GetValue("Sender", typeof(string));
             this.Age = (int)info.GetValue("Age", typeof(int));
-
+            this.TypeID = (int)info.GetValue("TypeID", typeof(int));
             int payloadLength = (int)info.GetValue("Length", typeof(int));
             byte[] data = new byte[payloadLength];
 
@@ -52,7 +76,7 @@ namespace Serialization_1
 
         public Packet(string name, int age, byte[] payload)
         {
-            this.Name = name;
+            this.Sender = name;
             this.Age = age;
             this.Payload = payload;
 
@@ -76,7 +100,7 @@ namespace Serialization_1
 
         public override string ToString()
         {
-            return "Name: " + Name + " Age: " + Convert.ToString(Age);
+            return "Name: " + Sender + " Age: " + Convert.ToString(Age);
         }
 
        

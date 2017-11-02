@@ -13,7 +13,9 @@ namespace Serialization_1
         static void Main(string[] args)
         {
 
-            
+
+
+           
 
             BinaryFormatter bf = new BinaryFormatter();
 
